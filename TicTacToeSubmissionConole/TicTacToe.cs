@@ -21,9 +21,10 @@ namespace TicTacToeSubmissionConole
          /// This method gives the results for game if player O or player X won the game
          /// </summary>
          /// 
-        public void Results()
+        public static char? CheckWinner(char[,] board)
         {
 
+            return null;
         }
 
 
