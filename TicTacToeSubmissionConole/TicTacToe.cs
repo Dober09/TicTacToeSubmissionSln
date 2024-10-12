@@ -16,6 +16,16 @@ namespace TicTacToeSubmissionConole
             _boardRenderer.Render();
         }
 
+        
+         /// <summary>
+         /// This method gives the results for game if player O or player X won the game
+         /// </summary>
+         /// 
+        public void Results()
+        {
+
+        }
+
 
         public void Run()
         {
@@ -24,9 +34,10 @@ namespace TicTacToeSubmissionConole
             int counter = 1;
             // The two Players
             
+            
 
             
-            while(counter < 7)
+            while(counter < 6)
             {
 
 
@@ -36,6 +47,9 @@ namespace TicTacToeSubmissionConole
                 Console.Write($"Player {(counter%2==0 ? "O" :"X" )}");
 
                 Console.SetCursorPosition(2, 20);
+
+                //check if the input is within the bounds
+                //if (row < 0 || row > 2 || column < 0 || column > 2)
 
                 Console.Write("Please Enter Row: ");
                 var row = Console.ReadLine();
@@ -49,6 +63,7 @@ namespace TicTacToeSubmissionConole
 
                 // THIS JUST DRAWS THE BOARD (NO TIC TAC TOE LOGIC)
                 //tenary if statement for checking which player should play
+                
                 var player = counter % 2 == 0 ? PlayerEnum.O : PlayerEnum.X;
                 _boardRenderer.AddMove(int.Parse(row), int.Parse(column), player, true);             
 
