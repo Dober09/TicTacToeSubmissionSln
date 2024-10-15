@@ -1,25 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
-using System.Text;
 using TicTacToeRendererLib.Enums;
 using TicTacToeRendererLib.Renderer;
 
 namespace TicTacToeSubmissionConole
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    public class Coordinates{
+    public class Coordinates
+    {
         private int _rowValue;
         private int _colValue;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="row"></param>
-        /// <param name="column"></param>
+       
         public Coordinates(int row, int column)
         {
             this.RowValue = row;
@@ -46,183 +38,115 @@ namespace TicTacToeSubmissionConole
     public class TicTacToe
     {
         private TicTacToeConsoleRenderer _boardRenderer;
-        private List<int> PlayerX_Positions = new List<int>();
-        private List<int> PlayerO_Positions = new List<int>();
-
+        private List<Coordinates> PlayerX_Positions = new List<Coordinates>();
+        private List<Coordinates> PlayerO_Positions = new List<Coordinates>();
+        private bool gameOver = false;
 
         public TicTacToe()
         {
-            _boardRenderer = new TicTacToeConsoleRenderer(10,6);
+            _boardRenderer = new TicTacToeConsoleRenderer(10, 6);
             _boardRenderer.Render();
         }
 
-     
-       
-
-        /// <summary>
-        /// checkes if the values are within a bounds of 0 and 2
-        /// </summary>
-        /// <param name="row"> int</param>
-        /// <param name="column"> int </param>
-        /// <returns>True if values are within the bounds and false if not</returns>
         public static bool CheckBounds(int row, int column)
         {
-
-            if ((row >= 0 && row <= 2) && (column >= 0 && column <= 2))
-            {
-                return true;
-            }
-            return false;
+            return (row >= 0 && row <= 2) && (column >= 0 && column <= 2);
         }
-
 
         public void Run()
         {
-
-            // couter for the number of times your are allowed to play
             int counter = 1;
-         
-            
-            
 
-            
-            while(counter < 6)
+            while (!gameOver && counter <= 9)
             {
-
+                PlayerEnum currentPlayer = (counter % 2 == 0) ? PlayerEnum.O : PlayerEnum.X;
 
                 Console.SetCursorPosition(2, 19);
-
-                //tenary if statement for checking which player should play
-                Console.Write($"Player {(counter%2==0 ? "O" :"X" )}");
+                Console.Write($"Player {currentPlayer}");
 
                 Console.SetCursorPosition(2, 20);
-
-                
-
-                Console.Write("Please Enter Row: ");
-                var row = Console.ReadLine();
+                Console.Write("Please Enter Row (0 to 2): ");
+                var rowInput = Console.ReadLine();
 
                 Console.SetCursorPosition(2, 22);
+                Console.Write("Please Enter Column (0 to 2): ");
+                var columnInput = Console.ReadLine();
 
+                //check if the value is within the bounds and is valid move 
+                if (int.TryParse(rowInput, out int row) && int.TryParse(columnInput, out int column) &&
+                    CheckBounds(row, column) && IsValidMove(row, column))
+                {
+                    Coordinates move = new Coordinates(row, column);
 
-                Console.Write("Please Enter Column: ");
-                var column = Console.ReadLine();
+                    // add the moves in tne list for each player
+                    if (currentPlayer == PlayerEnum.X)
+                        PlayerX_Positions.Add(move);
+                    else
+                        PlayerO_Positions.Add(move);
+                    //PRINT THE BOARD
+                    _boardRenderer.AddMove(row, column, currentPlayer, true);
+                    // check if the player is winner 
+                    if (CheckWinner(currentPlayer == PlayerEnum.X ? PlayerX_Positions : PlayerO_Positions))
+                    {
+                        Console.SetCursorPosition(2, 24);
+                        Console.WriteLine($"Player {currentPlayer} wins!");
+                        gameOver = true;
+                    }
+                    else if (counter == 9)
+                    {
+                        Console.SetCursorPosition(2, 24);
+                        Console.WriteLine("It's a draw!");
+                        gameOver = true;
+                    }
 
-
-                if (CheckBounds(int.Parse(row),int.Parse(column))) {
-
-                    //store the values position for each player
-                    if (counter % 2 == 0) { this.PlayerO_Positions.Add(int.Parse(row)); } else { this.PlayerX_Positions.Add(int.Parse(row)); }
-
-                    //tenary if statement for checking which player should play
-                    var player = counter % 2 == 0 ? PlayerEnum.O : PlayerEnum.X;
-                    
-                    // THIS JUST DRAWS THE BOARD (NO TIC TAC TOE LOGIC)
-                    _boardRenderer.AddMove(int.Parse(row), int.Parse(column), player, true);             
-
+                    counter++;
                 }
-
-             
-                   
-                
-                
-
-                //increment the counter 
-                counter++;
-
-            }
-
-            foreach(int pos in PlayerO_Positions)
-            {
-                Console.WriteLine(pos);
-
+                else
+                {
+                    Console.SetCursorPosition(2, 24);
+                    Console.WriteLine("Invalid move. Try again.");
+                    System.Threading.Thread.Sleep(1000);
+                    Console.SetCursorPosition(2, 24);
+                    Console.WriteLine(new string(' ', Console.WindowWidth));
+                }
             }
         }
-
-
-
-
 
         /// <summary>
-        /// This method check for a winner in the gama 
-        /// <br></br>
+        /// 
         /// </summary>
-        /// <param name="position"></param>
-        /// <param name="player"></param>
-        /// <returns>True if the player is winner </returns>
-        public static bool CheckWinner(List<Coordinates> position)
+        /// <param name="row"></param>
+        /// <param name="column"></param>
+        /// <returns></returns>
+        public bool IsValidMove(int row, int column)
         {
-
-            //list of all possible winning combonation
-            List<List<Coordinates>> lines = new List<List<Coordinates>>
-            {
-                //horizontal
-                new List<Coordinates>
-                {
-                    new Coordinates(0,0),
-                    new Coordinates(0,1),
-                    new Coordinates(0,2),
-                },
-
-                new List<Coordinates>
-                {
-                    new Coordinates(1,0),
-                    new Coordinates(1,1),
-                    new Coordinates(1,2),
-                },
-
-                new List<Coordinates>
-                {
-                    new Coordinates(2,0),
-                    new Coordinates(2,1),
-                    new Coordinates(2,2),
-                }
-                //vertical
-                , new List<Coordinates>
-                {
-                    new Coordinates(0,0),
-                    new Coordinates(1,0),
-                    new Coordinates(2,0),
-                }, new List<Coordinates>
-                {
-                    new Coordinates(0,1),
-                    new Coordinates(1,1),
-                    new Coordinates(2,1),
-                }, new List<Coordinates>
-                {
-                    new Coordinates(0,2),
-                    new Coordinates(1,2),
-                    new Coordinates(2,2),
-                },
-                //digonal
-                new List<Coordinates>
-                {
-                    new Coordinates(0,0),
-                    new Coordinates(1,1),
-                    new Coordinates(2,2),
-                },
-
-                new List<Coordinates>
-                {
-                    new Coordinates(0,2),
-                    new Coordinates(1,1),
-                    new Coordinates(2,0),
-                },
-
-            };
-
-            //loop each line and check if the player is winner
-            foreach (var line in lines)
-            {
-                if (line.All(coord => position.Contains(coord)))
-                {
-                    return true;
-                }
-
-            }
-
-            return false;
+            Coordinates move = new Coordinates(row, column);
+            return !PlayerX_Positions.Contains(move) && !PlayerO_Positions.Contains(move);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="positions"></param>
+        /// <returns></returns>
+        public static bool CheckWinner(List<Coordinates> positions)
+        {
+            List<List<Coordinates>> lines = new List<List<Coordinates>>
+            {
+                // Horizontal
+                new List<Coordinates> { new Coordinates(0,0), new Coordinates(0,1), new Coordinates(0,2) },
+                new List<Coordinates> { new Coordinates(1,0), new Coordinates(1,1), new Coordinates(1,2) },
+                new List<Coordinates> { new Coordinates(2,0), new Coordinates(2,1), new Coordinates(2,2) },
+                // Vertical
+                new List<Coordinates> { new Coordinates(0,0), new Coordinates(1,0), new Coordinates(2,0) },
+                new List<Coordinates> { new Coordinates(0,1), new Coordinates(1,1), new Coordinates(2,1) },
+                new List<Coordinates> { new Coordinates(0,2), new Coordinates(1,2), new Coordinates(2,2) },
+                // Diagonal
+                new List<Coordinates> { new Coordinates(0,0), new Coordinates(1,1), new Coordinates(2,2) },
+                new List<Coordinates> { new Coordinates(0,2), new Coordinates(1,1), new Coordinates(2,0) },
+            };
+
+            return lines.Any(line => line.All(coord => positions.Contains(coord)));
+        }
     }
 }
