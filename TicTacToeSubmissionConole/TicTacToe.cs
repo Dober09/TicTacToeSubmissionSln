@@ -6,35 +6,8 @@ using TicTacToeRendererLib.Renderer;
 
 namespace TicTacToeSubmissionConole
 {
-    public class Coordinates
-    {
-        private int _rowValue;
-        private int _colValue;
 
-       
-        public Coordinates(int row, int column)
-        {
-            this.RowValue = row;
-            this.ColValue = column;
-        }
 
-        public int RowValue { get => _rowValue; set => _rowValue = value; }
-        public int ColValue { get => _colValue; set => _colValue = value; }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is Coordinates other)
-            {
-                return this.RowValue == other.RowValue && this.ColValue == other.ColValue;
-            }
-            return false;
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(this.RowValue, this.ColValue);
-        }
-    }
     public class TicTacToe
     {
         private TicTacToeConsoleRenderer _boardRenderer;
@@ -57,6 +30,8 @@ namespace TicTacToeSubmissionConole
         {
             int counter = 1;
 
+
+            //loop of the game
             while (!gameOver && counter <= 9)
             {
                 PlayerEnum currentPlayer = (counter % 2 == 0) ? PlayerEnum.O : PlayerEnum.X;
@@ -85,6 +60,7 @@ namespace TicTacToeSubmissionConole
                         PlayerO_Positions.Add(move);
                     //PRINT THE BOARD
                     _boardRenderer.AddMove(row, column, currentPlayer, true);
+
                     // check if the player is winner 
                     if (CheckWinner(currentPlayer == PlayerEnum.X ? PlayerX_Positions : PlayerO_Positions))
                     {
@@ -125,12 +101,13 @@ namespace TicTacToeSubmissionConole
         }
 
         /// <summary>
-        /// 
+        /// This method checks the winner of the game
         /// </summary>
         /// <param name="positions"></param>
-        /// <returns></returns>
+        /// <returns>Return true  if the value exist in the list </returns>
         public static bool CheckWinner(List<Coordinates> positions)
         {
+            //list of all possible  winning coordinates in the game
             List<List<Coordinates>> lines = new List<List<Coordinates>>
             {
                 // Horizontal
