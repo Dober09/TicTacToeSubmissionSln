@@ -89,11 +89,11 @@ namespace TicTacToeSubmissionConole
         }
 
         /// <summary>
-        /// 
+        /// This method checks if the move is valid
         /// </summary>
         /// <param name="row"></param>
         /// <param name="column"></param>
-        /// <returns></returns>
+        /// <returns>Returns true if the move is value false if is invalid move </returns>
         public bool IsValidMove(int row, int column)
         {
             Coordinates move = new Coordinates(row, column);
